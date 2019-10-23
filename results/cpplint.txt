@@ -1,0 +1,5 @@
+toyas@ubuntu:~/catkin_ws/src/beginner_tutorials$ cpplint $( find . -name *.cpp | grep -vE -e "^./build/" -e "^./vendor/" )
+
+Done processing ./src/listener.cpp
+Done processing ./src/talker.cpp
+
