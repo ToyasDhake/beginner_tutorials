@@ -1,4 +1,4 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/ToyasDhake/beginner_tutorials/blob/Week10_HW/LICENSE.txt)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/ToyasDhake/beginner_tutorials/blob/master/LICENSE.txt)
 # ROS service for a simple caluctor
 
 ## Overview
