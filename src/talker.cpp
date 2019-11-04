@@ -17,6 +17,12 @@
 * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*
+* @file listener.cpp
+* @author Toyas Dhake
+* @date 04 Nov 2019
+* @copyright 2019 Toyas Dhake
+* @brief Contains the service which will perform simple arithmatic operators upon request from client.
 */
 #include <beginner_tutorials/serviceMessage.h>
 
@@ -24,6 +30,13 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
+
+/**
+* @brief Service to compute simple arithmatic operations which includes addition, subtraction, multiplicationand division.
+* @params beginner_tutorials :: serviceMessageRequest& request <generated in the serviceMessage.h in devel/include after adding .srv 
+* @params beginner_tutorials :: serviceMessageResponse& response <generated in the serviceMessage.h in devel/include after adding .srv
+* @return bool: if the service responses
+*/
 bool callback(beginner_tutorials :: serviceMessageRequest &request,
     beginner_tutorials :: serviceMessageResponse &response) {
   ROS_INFO("callback activated");
@@ -50,6 +63,10 @@ bool callback(beginner_tutorials :: serviceMessageRequest &request,
   return true;
 }
 
+
+/**
+* @brief main function. Creates a node and a service and advertises it over ROS.
+*/
 
 int main(int argc, char **argv) {
   /**
@@ -94,6 +111,7 @@ int main(int argc, char **argv) {
   ROS_DEBUG_STREAM("Ready to compute.");
   ros::ServiceServer service = n.advertiseService("calculator", callback);
   int rate = 10;
+  // Set refresh rate of service.
   if (argv[1] == "fast") {
     rate = 30;
   }
