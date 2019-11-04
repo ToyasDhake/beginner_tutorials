@@ -35,15 +35,15 @@ bool callback(beginner_tutorials :: serviceMessageRequest &request,
     response.answer = request.num1+request.num2;
     response.onList = true;
   } else if (in_name.compare("SUB") == 0) {
-    ROS_DEBUG_STREAM("Perfoming addition.");
+    ROS_DEBUG_STREAM("Perfoming subtraction.");
     response.answer = request.num1-request.num2;
     response.onList = true;
   } else if (in_name.compare("MUL") == 0) {
-    ROS_DEBUG_STREAM("Perfoming addition.");
+    ROS_DEBUG_STREAM("Perfoming multiplication.");
     response.answer = request.num1*request.num2;
     response.onList = true;
   } else if (in_name.compare("DIV") == 0) {
-    ROS_DEBUG_STREAM("Perfoming addition.");
+    ROS_DEBUG_STREAM("Perfoming division.");
     response.answer = request.num1/request.num2;
     response.onList = true;
   }
