@@ -22,7 +22,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
-
 int main(int argc, char **argv) {
     /**
     * The ros::init() function needs to see argc and argv so that it can perform
@@ -56,32 +55,31 @@ int main(int argc, char **argv) {
     bool divideByZeroCheck = true;
     while (ros::ok()) {
         std::cout << std::endl;
-        std::cout << "Enter operation to perform (enter <exit> to exit):- "<<std::endl;
-        ROS_INFO_STREAM("Following operations can be done:- ADD, SUB, MUL, DIV");
+        std::cout << "Enter operation to perform (enter <exit> to exit):- "
+                                                                << std::endl;
+        ROS_INFO_STREAM("Following operations can be done- ADD, SUB, MUL, DIV");
         // Enter the operation to perform
         std::cin >> operation;
-        
+
         if (operation.compare("exit") == 0) {
             ROS_WARN_STREAM("Exiting...");
             return 0;
         }
         // Enter first number
-        std::cout<<"Enter first number:- ";
-        std::cin>>num1;
-        // Enter second number 
-        std::cout<<"Enter first number:- ";
-        std::cin>>num2;
-       
+        std::cout << "Enter first number:- ";
+        std::cin >> num1;
+        // Enter second number
+        std::cout << "Enter first number:- ";
+        std::cin >> num2;
+
         // Check for divide by zero
         if (operation.compare("DIV") == 0) {
-            if(num2 == 0)
-            {
+            if (num2 == 0) {
                 ROS_ERROR_STREAM("You trying to divide by zero.");
                 divideByZeroCheck = false;
             }
         }
-        if (divideByZeroCheck)
-        {
+        if (divideByZeroCheck) {
             // Assign values ot request variables
             srv.request.operation = operation;
             srv.request.num1 = num1;
@@ -90,10 +88,11 @@ int main(int argc, char **argv) {
             if (client.call(srv)) {
                 // Print result
                 if (srv.response.onList) {
-                    std::cout << "Answer is:- " << srv.response.answer << std::endl;
+                    std::cout << "Answer is:- " << srv.response.answer
+                                                                << std::endl;
                 } else {
                     std::cout << srv.request.operation <<
-                    " is not valid operation." << std::endl;
+                                        " is not valid operation." << std::endl;
                 }
 
             } else {
@@ -103,12 +102,5 @@ int main(int argc, char **argv) {
             }
         }
     }
-
-
-
-
-
-
-
     return 0;
 }

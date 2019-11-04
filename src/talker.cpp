@@ -34,18 +34,15 @@ bool callback(beginner_tutorials :: serviceMessageRequest &request,
     ROS_DEBUG_STREAM("Perfoming addition.");
     response.answer = request.num1+request.num2;
     response.onList = true;
-  }
-  else if (in_name.compare("SUB") == 0) {
+  } else if (in_name.compare("SUB") == 0) {
     ROS_DEBUG_STREAM("Perfoming addition.");
     response.answer = request.num1-request.num2;
     response.onList = true;
-  }
-  else if (in_name.compare("MUL") == 0) {
+  } else if (in_name.compare("MUL") == 0) {
     ROS_DEBUG_STREAM("Perfoming addition.");
     response.answer = request.num1*request.num2;
     response.onList = true;
-  }
-  else if (in_name.compare("DIV") == 0) {
+  } else if (in_name.compare("DIV") == 0) {
     ROS_DEBUG_STREAM("Perfoming addition.");
     response.answer = request.num1/request.num2;
     response.onList = true;
@@ -103,7 +100,6 @@ int main(int argc, char **argv) {
   ros::Rate loop_rate(rate);
   loop_rate.sleep();
   ros::spin();
-
 
   return 0;
 }
