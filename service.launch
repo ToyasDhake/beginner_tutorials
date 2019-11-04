@@ -1,0 +1,14 @@
+<launch>
+    <node
+        pkg = "beginner_tutorials"
+        type = "talker"
+        name = "beginner_tutorials_server"
+        args = "$(arg speed)"
+    />
+
+    <node
+        pkg = "beginner_tutorials"
+        type = "listener"
+        name = "beginner_tutorials_client"
+    />
+</launch>

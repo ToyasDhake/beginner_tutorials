@@ -1,30 +1,59 @@
 /*
 * Copyright [MIT] 2019 Toyas Dhake
 *
-* Permission is hereby granted, free of charge, to any person obtaining a copy of 
-* this software and associated documentation files (the "Software"), to deal in 
-* the Software without restriction, including without limitation the rights to 
+* Permission is hereby granted, free of charge, to any person obtaining a copy of
+* this software and associated documentation files (the "Software"), to deal in
+* the Software without restriction, including without limitation the rights to
 * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 * the Software, and to permit persons to whom the Software is furnished to do so,
 * subject to the following conditions:
 *
-* The above copyright notice and this permission notice shall be included in all 
+* The above copyright notice and this permission notice shall be included in all
 * copies or substantial portions of the Software.
 *
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-* FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
-* COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
-* IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+* FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+* COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+* IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#include <beginner_tutorials/serviceMessage.h>
+
 #include <sstream>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
-/**
- * This tutorial demonstrates simple sending of messages over the ROS system.
- */
+bool callback(beginner_tutorials :: serviceMessageRequest &request,
+    beginner_tutorials :: serviceMessageResponse &response) {
+  ROS_INFO("callback activated");
+  std::string in_name(request.operation);
+  response.onList = false;
+  // Perform calculations
+  if (in_name.compare("ADD") == 0) {
+    ROS_DEBUG_STREAM("Perfoming addition.");
+    response.answer = request.num1+request.num2;
+    response.onList = true;
+  }
+  else if (in_name.compare("SUB") == 0) {
+    ROS_DEBUG_STREAM("Perfoming addition.");
+    response.answer = request.num1-request.num2;
+    response.onList = true;
+  }
+  else if (in_name.compare("MUL") == 0) {
+    ROS_DEBUG_STREAM("Perfoming addition.");
+    response.answer = request.num1*request.num2;
+    response.onList = true;
+  }
+  else if (in_name.compare("DIV") == 0) {
+    ROS_DEBUG_STREAM("Perfoming addition.");
+    response.answer = request.num1/request.num2;
+    response.onList = true;
+  }
+  return true;
+}
+
+
 int main(int argc, char **argv) {
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
@@ -62,40 +91,18 @@ int main(int argc, char **argv) {
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-
-  ros::Rate loop_rate(10);
-
-  /**
-   * A count of how many messages we have sent. This is used to create
-   * a unique string for each message.
-   */
-  int count = 0;
-  while (ros::ok()) {
-    /**
-     * This is a message object. You stuff it with data, and then publish it.
-     */
-    std_msgs::String msg;
-
-    std::stringstream ss;
-    ss << "Hello I am Toyas Dhake " << count;
-    msg.data = ss.str();
-
-    ROS_INFO("%s", msg.data.c_str());
-
-    /**
-     * The publish() function is how you send messages. The parameter
-     * is the message object. The type of this object must agree with the type
-     * given as a template parameter to the advertise<>() call, as was done
-     * in the constructor above.
-     */
-    chatter_pub.publish(msg);
-
-    ros::spinOnce();
-
-    loop_rate.sleep();
-    ++count;
+  if (!ros::isInitialized()) {
+    ROS_FATAL_STREAM("Something is worng ROS node not initialized");
   }
+  ROS_DEBUG_STREAM("Ready to compute.");
+  ros::ServiceServer service = n.advertiseService("calculator", callback);
+  int rate = 10;
+  if (argv[1] == "fast") {
+    rate = 30;
+  }
+  ros::Rate loop_rate(rate);
+  loop_rate.sleep();
+  ros::spin();
 
 
   return 0;
