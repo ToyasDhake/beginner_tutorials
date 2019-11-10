@@ -3,8 +3,10 @@
     <!-- Axes -->
     <param name="scale_linear" value="2" type="double"/>
     <param name="scale_angular" value="2" type="double"/>
-
+    
+    <arg name="record_flag" default="false"/>
+    
     <node pkg="beginner_tutorials" type="talker"
           args="/talk" name="talker" />
-   
+    <node name="record" pkg="rosbag" type="record" args="-a -O $(find beginner_tutorials)/results/talkerData" if="$(eval record_flag == true)"/>
   </launch>
