@@ -29,21 +29,19 @@
 
 
 void broadcastTF(double x, double y, double z, double yaw, double pitch,
-                                                 double roll, std::string name)
-{
+                                               double roll, std::string name) {
     static tf::TransformBroadcaster br;
     tf::Transform transform;
     transform.setOrigin(tf::Vector3(x, y, z));
     tf::Quaternion q;
     q.setRPY(roll, pitch, yaw);
     transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), 
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
                                                          "world", name));
 }
 
 int main(int argc, char** argv) {
-
-std::string name;
+    std::string name;
     ros::init(argc, argv, "my_tf_broadcaster");
     if (argc != 2) {
         ROS_ERROR("need a name as argument");
@@ -53,10 +51,10 @@ std::string name;
 
     ros::NodeHandle node;
     ros::Rate rate(10);
-    
+
     while (ros::ok()) {
         broadcastTF(1, 2, 3, 180, -90, 90, name);
-        
+
         rate.sleep();
         ros::spinOnce();
     }
