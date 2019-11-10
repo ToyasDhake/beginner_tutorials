@@ -1,8 +1,0 @@
-toyas@ubuntu:~/catkin_ws/src/beginner_tutorials$ cpplint $( find . -name *.cpp | grep -vE -e "^./build/" -e "^./vendor/" )
-
-Done processing ./src/listener.cpp
-./src/talker.cpp:27:  Is this a non-const reference? If so, make const or use a pointer: serviceMessageRequest &request  [runtime/references] [2]
-./src/talker.cpp:28:  Is this a non-const reference? If so, make const or use a pointer: serviceMessageResponse &response  [runtime/references] [2]
-Done processing ./src/talker.cpp
-Total errors found: 2
-
