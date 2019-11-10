@@ -25,89 +25,35 @@
 * @brief Client implementation to request service to perform simple arithmatic 
 * operations.
 */
-#include <beginner_tutorials/serviceMessage.h>
+
 #include "ros/ros.h"
+#include <tf/transform_listener.h>
 #include "std_msgs/String.h"
+#include <iostream>
 
 int main(int argc, char **argv) {
-    /**
-    * The ros::init() function needs to see argc and argv so that it can perform
-    * any ROS arguments and name remapping that were provided at the command line.
-    * For programmatic remappings you can use a different version of init() which takes
-    * remappings directly, but for most command-line programs, passing argc and argv is
-    * the easiest way to do it.  The third argument to init() is the name of the node.
-    *
-    * You must call one of the versions of ros::init() before using any other
-    * part of the ROS system.
-    */
-    ros::init(argc, argv, "listener");
+    ros::init(argc, argv, "my_tf_listener");
 
-    /**
-    * NodeHandle is the main access point to communications with the ROS system.
-    * The first NodeHandle constructed will fully initialize this node, and the last
-    * NodeHandle destructed will close down the node.
-    */
-    ros::NodeHandle n;
-
-    if (!ros::isInitialized()) {
-        ROS_FATAL_STREAM("Something is worng ROS node not initialized");
-    }
-    // Create Client
-    ros::ServiceClient client = n.serviceClient<beginner_tutorials::
-    serviceMessage>("calculator");
-    beginner_tutorials :: serviceMessage srv;
-    std::string operation;
-
-    float num1, num2;
-    bool divideByZeroCheck = true;
-    while (ros::ok()) {
-        std::cout << std::endl;
-        std::cout << "Enter operation to perform (enter <exit> to exit):- "
-                                                                << std::endl;
-        ROS_INFO_STREAM("Following operations can be done- ADD, SUB, MUL, DIV");
-        // Enter the operation to perform
-        std::cin >> operation;
-
-        if (operation.compare("exit") == 0) {
-            ROS_WARN_STREAM("Exiting...");
-            return 0;
+    
+    tf::TransformListener listener;
+    ros::NodeHandle node;
+    ros::Rate rate(10);
+    while (ros::ok()){
+        tf::StampedTransform transform;
+        try{
+          listener.lookupTransform("/world", "/talk",
+                                   ros::Time(0), transform);
+          std::cout<<"x: "<<transform.getOrigin().x()<<" y: "<<transform.getOrigin().y()<<" z: "<<transform.getOrigin().z()<<std::endl;
+          std::cout<<"Quaternion: "<<transform.getRotation().x()<<", "<<transform.getRotation().y()<<", "<<transform.getRotation().z()<<", "<<transform.getRotation().w()<<std::endl;
         }
-        // Enter first number
-        std::cout << "Enter first number:- ";
-        std::cin >> num1;
-        // Enter second number
-        std::cout << "Enter first number:- ";
-        std::cin >> num2;
-
-        // Check for divide by zero
-        if (operation.compare("DIV") == 0) {
-            if (num2 == 0) {
-                ROS_ERROR_STREAM("You trying to divide by zero.");
-                divideByZeroCheck = false;
-            }
+        catch (tf::TransformException &ex) {
+          ROS_ERROR("%s",ex.what());
+          ros::Duration(1.0).sleep();
+          continue;
         }
-        if (divideByZeroCheck) {
-            // Assign values ot request variables
-            srv.request.operation = operation;
-            srv.request.num1 = num1;
-            srv.request.num2 = num2;
-            // Call the service
-            if (client.call(srv)) {
-                // Print result
-                if (srv.response.onList) {
-                    std::cout << "Answer is:- " << srv.response.answer
-                                                                << std::endl;
-                } else {
-                    std::cout << srv.request.operation <<
-                                        " is not valid operation." << std::endl;
-                }
 
-            } else {
-                // Service call failed
-                ROS_ERROR_STREAM("Failed to call service.");
-                return 1;
-            }
-        }
+        rate.sleep();
+        ros::spinOnce();
     }
     return 0;
 }
