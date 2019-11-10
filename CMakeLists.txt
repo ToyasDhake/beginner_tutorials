@@ -22,3 +22,23 @@ target_link_libraries(talker ${catkin_LIBRARIES})
 add_executable(listener src/listener.cpp)
 target_link_libraries(listener ${catkin_LIBRARIES})
 add_dependencies(listener beginner_tutorials_gencpp)
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+
+  add_rostest_gtest(
+  tf_talker
+  test/tf_talker.launch
+  test/tf_talker.cpp
+  )
+  target_link_libraries(
+  tf_talker
+  ${catkin_LIBRARIES}
+  )
+  add_dependencies(
+  tf_talker
+  ${PROJECT_NAME}_generate_messages_cpp
+  ${catkin_EXPORTED_TARGETS}
+  )
+endif()
+

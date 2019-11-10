@@ -27,6 +27,7 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 
+
 void broadcastTF(double x, double y, double z, double yaw, double pitch,
                                                  double roll, std::string name)
 {
@@ -52,8 +53,10 @@ std::string name;
 
     ros::NodeHandle node;
     ros::Rate rate(10);
+    
     while (ros::ok()) {
         broadcastTF(1, 2, 3, 180, -90, 90, name);
+        
         rate.sleep();
         ros::spinOnce();
     }
