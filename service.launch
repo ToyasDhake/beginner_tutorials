@@ -1,14 +1,10 @@
 <launch>
-    <node
-        pkg = "beginner_tutorials"
-        type = "talker"
-        name = "beginner_tutorials_server"
-        args = "$(arg speed)"
-    />
+    
+    <!-- Axes -->
+    <param name="scale_linear" value="2" type="double"/>
+    <param name="scale_angular" value="2" type="double"/>
 
-    <node
-        pkg = "beginner_tutorials"
-        type = "listener"
-        name = "beginner_tutorials_client"
-    />
-</launch>
+    <node pkg="beginner_tutorials" type="talker"
+          args="/talk" name="talker" />
+   
+  </launch>

@@ -24,100 +24,32 @@
 * @copyright 2019 Toyas Dhake
 * @brief Contains the service which will perform simple arithmatic operators upon request from client.
 */
-#include <beginner_tutorials/serviceMessage.h>
+#include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
 
-#include <sstream>
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+int main(int argc, char** argv) {
 
-
-/**
-* @brief Service to compute simple arithmatic operations which includes addition, subtraction, multiplicationand division.
-* @params beginner_tutorials :: serviceMessageRequest& request <generated in the serviceMessage.h in devel/include after adding .srv 
-* @params beginner_tutorials :: serviceMessageResponse& response <generated in the serviceMessage.h in devel/include after adding .srv
-* @return bool: if the service responses
-*/
-bool callback(beginner_tutorials :: serviceMessageRequest &request,
-    beginner_tutorials :: serviceMessageResponse &response) {
-  ROS_INFO("callback activated");
-  std::string in_name(request.operation);
-  response.onList = false;
-  // Perform calculations
-  if (in_name.compare("ADD") == 0) {
-    ROS_DEBUG_STREAM("Perfoming addition.");
-    response.answer = request.num1+request.num2;
-    response.onList = true;
-  } else if (in_name.compare("SUB") == 0) {
-    ROS_DEBUG_STREAM("Perfoming subtraction.");
-    response.answer = request.num1-request.num2;
-    response.onList = true;
-  } else if (in_name.compare("MUL") == 0) {
-    ROS_DEBUG_STREAM("Perfoming multiplication.");
-    response.answer = request.num1*request.num2;
-    response.onList = true;
-  } else if (in_name.compare("DIV") == 0) {
-    ROS_DEBUG_STREAM("Perfoming division.");
-    response.answer = request.num1/request.num2;
-    response.onList = true;
+std::string name;
+  ros::init(argc, argv, "my_tf_broadcaster");
+  if (argc != 2) {
+      ROS_ERROR("need a name as argument");
+      return -1;
   }
-  return true;
-}
+  name = argv[1];
 
-
-/**
-* @brief main function. Creates a node and a service and advertises it over ROS.
-*/
-
-int main(int argc, char **argv) {
-  /**
-   * The ros::init() function needs to see argc and argv so that it can perform
-   * any ROS arguments and name remapping that were provided at the command line.
-   * For programmatic remappings you can use a different version of init() which takes
-   * remappings directly, but for most command-line programs, passing argc and argv is
-   * the easiest way to do it.  The third argument to init() is the name of the node.
-   *
-   * You must call one of the versions of ros::init() before using any other
-   * part of the ROS system.
-   */
-  ros::init(argc, argv, "talker");
-
-  /**
-   * NodeHandle is the main access point to communications with the ROS system.
-   * The first NodeHandle constructed will fully initialize this node, and the last
-   * NodeHandle destructed will close down the node.
-   */
-  ros::NodeHandle n;
-
-  /**
-   * The advertise() function is how you tell ROS that you want to
-   * publish on a given topic name. This invokes a call to the ROS
-   * master node, which keeps a registry of who is publishing and who
-   * is subscribing. After this advertise() call is made, the master
-   * node will notify anyone who is trying to subscribe to this topic name,
-   * and they will in turn negotiate a peer-to-peer connection with this
-   * node.  advertise() returns a Publisher object which allows you to
-   * publish messages on that topic through a call to publish().  Once
-   * all copies of the returned Publisher object are destroyed, the topic
-   * will be automatically unadvertised.
-   *
-   * The second parameter to advertise() is the size of the message queue
-   * used for publishing messages.  If messages are published more quickly
-   * than we can send them, the number here specifies how many messages to
-   * buffer up before throwing some away.
-   */
-  if (!ros::isInitialized()) {
-    ROS_FATAL_STREAM("Something is worng ROS node not initialized");
+  ros::NodeHandle node;
+  static tf::TransformBroadcaster br;
+  ros::Rate rate(10);
+  while (ros::ok()) {
+      tf::Transform transform;
+      transform.setOrigin(tf::Vector3(1, 2, 3));
+      tf::Quaternion q;
+      q.setRPY(90, -90, 180);
+      transform.setRotation(q);
+      br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), 
+                                                         "world", name));
+      rate.sleep();
+      ros::spinOnce();
   }
-  ROS_DEBUG_STREAM("Ready to compute.");
-  ros::ServiceServer service = n.advertiseService("calculator", callback);
-  int rate = 10;
-  // Set refresh rate of service.
-  if (argv[1] == "fast") {
-    rate = 30;
-  }
-  ros::Rate loop_rate(rate);
-  loop_rate.sleep();
-  ros::spin();
-
   return 0;
 }
