@@ -1,38 +1,66 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/ToyasDhake/beginner_tutorials/blob/master/LICENSE.txt)
-# ROS service for a simple caluctor
+# ROS TF, rosbag and unit tesing demo
 
 ## Overview
 
-This demonstration of ROS service/client mechanism. The client connects to the 
-service and sends requests to perform operations. The service can perform four 
-basic operation right now: addition, subtraction, multiplication and division.
+Project consist of 3 parts ros tf, unit testing and rosbag. 
 
-Client sends three things one operator and two operand.
+ROS TF:- Flie called talker.cpp which will broadcast tf frame called talk with 
+parent world.
+
+rosbag:- rosbag is used to record all the broadcasted messages and play it back 
+when required. Frames from talker.cpp are recorded for ~15sec and then played 
+back for listener.cpp.
+
+Unit testing:- level 2 unit testing is done using gtest suite.
 
 ## Standard install via command-line
+
+Run talker.cpp
 
 ```
 git clone https://github.com/ToyasDhake/beginner_tutorials.git
 cp <path to repository> <catkin_workspace/src/>
-cd <catkin_workspace/build>
-make
-cd ..
+cd <catkin_workspace>
+catkin_make
 source ./devel/setup.bash
-roslaunch --screen beginner_tutorials service.launch speed:="<argument>"
--Enter operator (ADD, SUB, MUL, DIV)
--Enter first number
--Enter second number
+roslaunch beginner_tutorials service.launch record_flag:=false
 ```
-Argument can be either "slow" or "fast". Slow will result in service running 10
-time a second and fast will result in service running 30 times a second.
+Setting record_flag to true will result in rosbag recording all the messages 
+that are begin broadcasted.
 
-## Limitations
-- Calcuator cannot perform advance operations. It is limited to 4 operations:-
-addition, subtraction, multiplicaiton and division.
+Playback rosbag data and execute listener
 
-Note: ROS service accepts adress by reference by using '&' but cpplint is giving 
-error saying it should be either decleared const or use pointer. Both are not 
-accepted by ROS.
+```
+(terminal 1)
+git clone https://github.com/ToyasDhake/beginner_tutorials.git
+cp <path to repository> <catkin_workspace/src/>
+cd <catkin_workspace>
+catkin_make
+roscore
+(terminal 2)
+cd <catkin_workspace>
+source ./devel/setup.bash
+rosrun beginner_tutorials listener 
+(terminal 3)
+cd <catkin_workspace/src/beginner_tutorials/results/>
+rosbag play talkerData.bag 
+```
+
+Unit testing
+
+```
+git clone https://github.com/ToyasDhake/beginner_tutorials.git
+cp <path to repository> <catkin_workspace/src/>
+cd <catkin_workspace>
+catkin_make tests
+catkin_make test
+```
+
+##Assumption
+
+System has working installation of ROS kinetic.
+
 
 ## Copyright
 
