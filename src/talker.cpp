@@ -27,29 +27,35 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 
+void broadcastTF(double x, double y, double z, double yaw, double pitch,
+                                                 double roll, std::string name)
+{
+    static tf::TransformBroadcaster br;
+    tf::Transform transform;
+    transform.setOrigin(tf::Vector3(x, y, z));
+    tf::Quaternion q;
+    q.setRPY(roll, pitch, yaw);
+    transform.setRotation(q);
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), 
+                                                         "world", name));
+}
+
 int main(int argc, char** argv) {
 
 std::string name;
-  ros::init(argc, argv, "my_tf_broadcaster");
-  if (argc != 2) {
-      ROS_ERROR("need a name as argument");
-      return -1;
-  }
-  name = argv[1];
+    ros::init(argc, argv, "my_tf_broadcaster");
+    if (argc != 2) {
+        ROS_ERROR("need a name as argument");
+        return -1;
+    }
+    name = argv[1];
 
-  ros::NodeHandle node;
-  static tf::TransformBroadcaster br;
-  ros::Rate rate(10);
-  while (ros::ok()) {
-      tf::Transform transform;
-      transform.setOrigin(tf::Vector3(1, 2, 3));
-      tf::Quaternion q;
-      q.setRPY(90, -90, 180);
-      transform.setRotation(q);
-      br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), 
-                                                         "world", name));
-      rate.sleep();
-      ros::spinOnce();
-  }
-  return 0;
+    ros::NodeHandle node;
+    ros::Rate rate(10);
+    while (ros::ok()) {
+        broadcastTF(1, 2, 3, 180, -90, 90, name);
+        rate.sleep();
+        ros::spinOnce();
+    }
+    return 0;
 }
