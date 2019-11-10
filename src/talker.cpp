@@ -22,20 +22,34 @@
 * @author Toyas Dhake
 * @date 04 Nov 2019
 * @copyright 2019 Toyas Dhake
-* @brief Contains the service which will perform simple arithmatic operators upon request from client.
+* @brief Broadcasts tf Fram consisting of non zero translation in x, y and z 
+*        direction and rotation in quaternion fromat.
 */
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 
-
+/**
+* @brief Broadcast TF frame with non zero value of translation in x, y and z 
+*        direction and rotation i nfrom of quaternion.
+* @params double x X coordiante
+* @params double y Y coordiante
+* @params double z Z coordiante
+* @params double yaw Yaw rotation
+* @params double pitch Pitch rotation
+* @params double roll Roll rotation
+* @params std::string name Name of TF frame.
+* @return void
+*/
 void broadcastTF(double x, double y, double z, double yaw, double pitch,
                                                double roll, std::string name) {
     static tf::TransformBroadcaster br;
+    // Create TF frame and set values
     tf::Transform transform;
     transform.setOrigin(tf::Vector3(x, y, z));
     tf::Quaternion q;
     q.setRPY(roll, pitch, yaw);
     transform.setRotation(q);
+    // Broadcast frame
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
                                                          "world", name));
 }
@@ -49,12 +63,14 @@ int main(int argc, char** argv) {
     }
     name = argv[1];
 
+    // Set limit to refresh rate
     ros::NodeHandle node;
     ros::Rate rate(10);
 
     while (ros::ok()) {
+        // Set and broadcast
         broadcastTF(1, 2, 3, 180, -90, 90, name);
-
+        
         rate.sleep();
         ros::spinOnce();
     }

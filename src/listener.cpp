@@ -22,8 +22,8 @@
 * @author Toyas Dhake
 * @date 04 Nov 2019
 * @copyright 2019 Toyas Dhake
-* @brief Client implementation to request service to perform simple arithmatic
-* operations.
+* @brief Listener implementation, looks for tf frames being broadcasted and 
+*        captures them to print on termial.
 */
 
 #include <tf/transform_listener.h>
@@ -33,16 +33,17 @@
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "my_tf_listener");
-
-
     tf::TransformListener listener;
     ros::NodeHandle node;
+    // Set refresh limit
     ros::Rate rate(10);
     while (ros::ok()) {
         tf::StampedTransform transform;
         try {
+            // Look from TF frame being broadcasted
             listener.lookupTransform("/world", "/talk",
                                    ros::Time(0), transform);
+            // Print coordiante inside the frame
             std::cout << "x: " << transform.getOrigin().x() << " y: "
                             << transform.getOrigin().y() << " z: "
                             << transform.getOrigin().z() << std::endl;
@@ -51,6 +52,7 @@ int main(int argc, char **argv) {
                                     << transform.getRotation().z() << ", "
                                     << transform.getRotation().w() << std::endl;
         }
+        // Inacse there is not TF frame being broadcasted wait and keep trying
         catch (tf::TransformException &ex) {
             ROS_ERROR("%s", ex.what());
             ros::Duration(1.0).sleep();

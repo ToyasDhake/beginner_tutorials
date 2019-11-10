@@ -30,13 +30,23 @@
 #include <tf/transform_broadcaster.h>
 #include "std_msgs/String.h"
 
+/**
+* @brief Callback function from node.subcribe()
+* @params std_msgs::String::ConstPtr& msg Message that was broadcasted.
+* @return void
+*/
 void chatterCallback(const std_msgs::String::ConstPtr& msg) {
     ROS_INFO("I heard: [%s]", msg->data.c_str());
 }
 
+/**
+* @brief Test to check is broadcaster is active.
+*/
 TEST(TESTSuite, testTFbroadcaster) {
     ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+    // Subscribe to broadcaster
+    ros::Subscriber sub = n.subscribe("talker", 1000, chatterCallback);
+    // If subscription exists which means broadcster exist
     bool exists(sub);
     EXPECT_TRUE(exists);
 }
